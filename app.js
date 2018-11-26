@@ -73,9 +73,9 @@ app.post('/register',function(req, res){
 });
 
 app.post('/login',function(req, res){
-	console.log("Login request: { id: " + req.body.id + ", password:", req.body.password + " }");
+	console.log("Login request: { student_id: " + req.body.student_id + ", password:", req.body.password + " }");
 
-	user.findOne( {$and:[{student_id: req.body.id}, {password: req.body.password}]}, function(err, result){
+	user.findOne( {$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result){
 		if(err != null) {
 			console.error("Database access failed");
 			return;
@@ -83,13 +83,21 @@ app.post('/login',function(req, res){
 
 		if(result != null) {
 			res.cookie('student_id', result.student_id);
-			res.send({result : "success"});
+			res.send({result : "success", student_id: result.student_id});
 			console.log("Login success");
 		} else {
 			res.send({result : "failed"});
 			console.log("Login failed");
 		}
 	});
+});
+
+app.post('/logout',function(req, res){
+	var id = req.cookies.student_id;
+	console.log("Logout request: { student_id: " + id + " }");
+	res.cookie('student_id', '');
+	res.send();
+	console.log("Logout success");
 });
 
 app.listen(8000, function(){

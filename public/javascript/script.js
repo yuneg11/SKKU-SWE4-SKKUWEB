@@ -6,19 +6,17 @@ function hideNavi(id) {
 		navi.style.visibility = "hidden";
 }
 
-function changeTableStyle(common_id){
+function changeTableStyle(common_id) {
 	i = 0;
-	do
-	{
+	do {
 		id = common_id + "_" + i;
 		t = document.getElementById(id)
 
-		if( t == null )	break;
+		if(t == null) break;
 
 		t = t.getElementsByTagName("table");
 		
-		for(var j=0;j<t.length;j++)
-		{
+		for(var j = 0; j < t.length; j++) {
 			if(t[j].className == "table table-striped table-dark")
 				t[j].className = "table table-striped table-hover";
 			else
@@ -26,7 +24,18 @@ function changeTableStyle(common_id){
 		}
 
 		i++;
-	}while(t != null);
+	} while(t != null);
+}
+
+function isValidForm(form_name) {
+	var valid = true;
+
+	$(form_name).children("p").children("input").each(function() {
+		if($.trim($(this).val()) == '')
+			valid = false;
+	});
+
+	return valid;
 }
 
 
@@ -68,34 +77,39 @@ $(function(){
 		*/
 	});
 
-	$("#login_request").click(function(){
-		var formData = $("#login_form").serialize();
+	
+	$("#login_request").click(function() {
+		if(isValidForm("#login_form")) {
+			var formData = $("#login_form").serialize();
+			$.ajax({
+				type : "POST",
+				url : "/login",
+				data : formData,
+				success : function(res) {
+					if(res.result == "success") {
+						location.reload();
+					} else {
+						alert("Student ID or Password is wrong!");
+					}
+				}
+			});
+		} else {
+			alert('Fill all input!');
+		}
+	});
+
+	$("#logout").click(function() {
 		$.ajax({
 			type : "POST",
-			url : "/login",
-			data : formData,
-			success : function(res){
-				if(res.result == "success") {
-					alert("success");
-				} else {
-					alert("failed");
-				}
+			url : "/logout",
+			success : function(res) {
+				location.reload();
 			}
 		});
 	});
 
-	// Register handling
-	$("#register_request").click(function(){
-		var valid = true;
-		// Validate register form
-		$("#register_form").children("p").children("input").each(function(){
-			if($.trim($(this).val()) == ''){
-				valid = false;
-			}
-		});
-
-		// Send request
-		if(valid) {
+	$("#register_request").click(function() {
+		if(isValidForm("#register_form")) {
 			var formData = $("#register_form").serialize();
 
 			$.ajax({
