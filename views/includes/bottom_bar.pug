@@ -1,0 +1,43 @@
+#register_popup.fixed-bottom.bg-white
+  form(id = "register_form")
+    p
+      | Student ID 
+      input#register_studentid(type='text', name='student_id')
+    p
+      | PASSWORD 
+      input#register_password(type='password', name='password')
+    p
+      | Name 
+      input#register_name(type='text', name='name')
+    p
+      | Birth 
+      input#register_birth(type='date', name='birth')
+    p
+      | Department 
+      input#register_department(type='text', name='department')
+    button#register_request.btn.btn-light(type='button') Register
+      
+#login_popup.fixed-bottom.bg-white
+  form(id = "login_form")
+    p
+      | ID 
+      input#login_id(type='text', name='id')
+    p
+      | PASSWORD
+      input#login_password(type='password', name='password')
+    button#login_request.btn.btn-light(type='button') Login
+
+#my_buttonNav.navbar.navbar-light.navbar-expand-lg.fixed-bottom
+  .nav-item
+    button.btn.btn-light(type='button', onclick="hideNavi('my_nav')") Hide/Show Navigation Bar
+  .nav-item
+    button.btn.btn-light(type='button', onclick="changeTableStyle('my_table')") White/Black Table Style
+  
+  if !student_id
+    button#register.btn.btn-info.btn-lg(type='button', style='position: absolute; right: 100px; bottom:10px;') Sign up
+    button#login.btn.btn-success.btn-lg(type='button', style='position: absolute; right: 10px; bottom:10px;') Login
+  else
+    p
+      | User : #{student_id}
+    button#gls.btn.btn-info.btn-lg(type='button', style='position: absolute; right: 110px; bottom:10px;') GLS
+    button#logout.btn.btn-warning.btn-lg(type='button', style='position: absolute; right: 10px; bottom:10px;') Logout

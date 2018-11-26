@@ -32,10 +32,12 @@ function changeTableStyle(common_id){
 
 $(function(){
 	$("#login").click(function(){
+		$("#register_popup").slideUp();
 		$("#login_popup").slideToggle();
 	});
 
 	$("#register").click(function(){
+		$("#login_popup").slideUp();
 		$("#register_popup").slideToggle();
 	});
 
@@ -64,5 +66,54 @@ $(function(){
 
 		}
 		*/
+	});
+
+	$("#login_request").click(function(){
+		var formData = $("#login_form").serialize();
+		$.ajax({
+			type : "POST",
+			url : "/login",
+			data : formData,
+			success : function(res){
+				if(res.result == "success") {
+					alert("success");
+				} else {
+					alert("failed");
+				}
+			}
+		});
+	});
+
+	// Register handling
+	$("#register_request").click(function(){
+		var valid = true;
+		// Validate register form
+		$("#register_form").children("p").children("input").each(function(){
+			if($.trim($(this).val()) == ''){
+				valid = false;
+			}
+		});
+
+		// Send request
+		if(valid) {
+			var formData = $("#register_form").serialize();
+
+			$.ajax({
+				type : "POST",
+				url : "/register",
+				data : formData,
+				success : function(res){
+					if(res.result == "success") {
+						alert("Registration success");
+					} else if(res.result == "duplicate") {
+						alert("Duplicated ID!");
+					} else {
+						alert("Registeration failed");
+					}
+				}
+			});
+		} else {
+			alert('Fill all input!');
+		}
 	});
 });
