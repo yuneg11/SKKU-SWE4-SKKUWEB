@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var app = express();
 var mongoose = require('mongoose');
 var db = mongoose.connection;
-var user = require('./models/user');
+var users = require('./models/user');
 
 app.set('view engine', 'pug')
 app.use(express.static('public'));
@@ -17,7 +17,7 @@ db.once('open', function(){
 	console.log("Connected to database");
 });
 
-mongoose.connect('mongodb://localhost/swexp4_project', {useNewUrlParser : true});
+mongoose.connect('mongodb://localhost/project', {useNewUrlParser : true});
 
 app.get('/', function(req, res){
 	var id = req.cookies.student_id;
@@ -40,7 +40,7 @@ app.get('/human', function(req, res){
 app.post('/register',function(req, res){
 	console.log("Register request: { student_id: " + req.body.student_id + ", password:", req.body.password + ", ... }");
 
-	user.findOne( {student_id: req.body.student_id}, function(err, result){
+	users.findOne( {student_id: req.body.student_id}, function(err, result){
 		if(err != null) {
 			res.send({result : "failed"});
 			console.error("Database read failed");
@@ -48,7 +48,7 @@ app.post('/register',function(req, res){
 		}
 
 		if(result == null) {
-			var student = new user({
+			var student = new users({
 				student_id: req.body.student_id,
 				password: req.body.password,
 				name: req.body.name,
@@ -56,7 +56,7 @@ app.post('/register',function(req, res){
 				department: req.body.department
 			});
 
-			student.save(function(err, user){
+			student.save(function(err){
 				if(err) {
 					res.send({result : "failed"});
 					console.error("Database write failed");
@@ -75,7 +75,7 @@ app.post('/register',function(req, res){
 app.post('/login',function(req, res){
 	console.log("Login request: { student_id: " + req.body.student_id + ", password:", req.body.password + " }");
 
-	user.findOne( {$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result){
+	users.findOne( {$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result){
 		if(err != null) {
 			console.error("Database access failed");
 			return;

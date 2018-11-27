@@ -9,4 +9,4 @@ var UserSchema = new Schema({
     department: String
 });
 
-module.exports = mongoose.model('user', UserSchema, 'user');
+module.exports = mongoose.model('user', UserSchema);
