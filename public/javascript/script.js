@@ -81,11 +81,12 @@ $(function(){
 	$("#login_request").click(function() {
 		if(isValidForm("#login_form")) {
 			var formData = $("#login_form").serialize();
+
 			$.ajax({
-				type : "POST",
-				url : "/login",
-				data : formData,
-				success : function(res) {
+				type: "POST",
+				url: "/login",
+				data: formData,
+				success: function(res) {
 					if(res.result == "success") {
 						location.reload();
 					} else {
@@ -94,15 +95,15 @@ $(function(){
 				}
 			});
 		} else {
-			alert('Fill all input!');
+			alert("Fill all input!");
 		}
 	});
 
 	$("#logout").click(function() {
 		$.ajax({
-			type : "POST",
-			url : "/logout",
-			success : function(res) {
+			type: "POST",
+			url: "/logout",
+			success: function(res) {
 				location.reload();
 			}
 		});
@@ -113,10 +114,10 @@ $(function(){
 			var formData = $("#register_form").serialize();
 
 			$.ajax({
-				type : "POST",
-				url : "/register",
-				data : formData,
-				success : function(res){
+				type: "POST",
+				url: "/register",
+				data: formData,
+				success: function(res){
 					if(res.result == "success") {
 						alert("Registration success");
 					} else if(res.result == "duplicate") {
@@ -127,7 +128,7 @@ $(function(){
 				}
 			});
 		} else {
-			alert('Fill all input!');
+			alert("Fill all input!");
 		}
 	});
 });
