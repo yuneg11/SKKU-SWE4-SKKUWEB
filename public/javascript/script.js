@@ -39,44 +39,26 @@ function isValidForm(form_name) {
 }
 
 
-$(function(){
-	$("#login").click(function(){
+$(function() {
+	$("#login").click(function() {
 		$("#register_popup").slideUp();
 		$("#login_popup").slideToggle();
 	});
 
-	$("#register").click(function(){
+	$("#register").click(function() {
 		$("#login_popup").slideUp();
 		$("#register_popup").slideToggle();
 	});
 
 
-	$(".nav-link").click(function(){
-		/* this is midterm's answer. just refer it.
+	$(".nav-link").click(function() {
+		$(".active").removeClass("active");
 
-		var id = ['navHome', 'navStInfo', 'navGradeInfo', 'navClassInfo'];
-		for(var i=0;i<id.length;i++)
-		{
-			if($(this).attr('class') == 'nav-link disabled')
-				break;
-
-			if($(this).attr('id') == id[i])
-			{
-				$('#'+id[i]).removeClass('link');
-				$('#'+id[i]).addClass('active');
-				$('#'+id[i]+'Content').show();
-			}
-			else
-			{
-				$('#'+id[i]).removeClass('active');
-				$('#'+id[i]).addClass('link');
-				$('#'+id[i]+'Content').hide();
-			}
-
-		}
-		*/
+		var button_id = $(this).attr("id");
+		var content_id = button_id + "_content";
+		$(this).addClass("active");
+		$('#'+content_id).addClass("active");
 	});
-
 	
 	$("#login_request").click(function() {
 		if(isValidForm("#login_form")) {

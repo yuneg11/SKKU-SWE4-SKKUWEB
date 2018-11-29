@@ -75,7 +75,7 @@ app.post('/register',function(req, res) {
 app.post('/login',function(req, res) {
 	console.log("Login request: { student_id: " + req.body.student_id + ", password:", req.body.password + " }");
 
-	users.findOne( {$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result) {
+	users.findOne({$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result) {
 		if(err != null) {
 			console.error("Database access failed");
 			return;
@@ -98,6 +98,25 @@ app.post('/logout',function(req, res) {
 	res.cookie('student_id', '');
 	res.send();
 	console.log("Logout success");
+});
+
+app.get('/gls', function(req, res) {
+	var id = req.cookies.student_id;
+	
+	if(id == "admin") {
+		users.findOne({student_id: id}, function(err, result) {
+			if(result.password == "1234") {
+				res.render('gls_main', {student_id : id, type: "admin"});
+				console.log("GLS request: { student_id: " + id + ", type: admin }");
+			} else {
+				res.render('gls_main', {student_id : id, type: "student"});
+				console.log("GLS request: { student_id: " + id + ", type: student }");
+			}
+		});
+	} else {
+		res.render('gls_main', {student_id : id, type: "student"});
+		console.log("GLS request: { student_id: " + id + ", type: student }");
+	}
 });
 
 app.listen(8000, function() {
