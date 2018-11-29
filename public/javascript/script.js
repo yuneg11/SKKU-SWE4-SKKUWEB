@@ -65,9 +65,31 @@ function refreshCourselist() {
 	});
 }
 
+function refreshStudentinfo() {
+	if($("#student_info_name").html() == '') {
+		$.ajax({
+			type: "GET",
+			url: "/studentinfo",
+			success: function(res){
+				if(res.result == "success") {
+					$("#student_info_name").html(res.data.name);
+					$("#student_info_id").html(res.data.student_id);
+					$("#student_info_birth").html(res.data.birth.toString().split("T")[0]);
+					$("#student_info_credit").html(res.data.credit);
+					$("#student_info_department").html(res.data.department);
+				} else {
+					alert("Course list loading failed!");
+				}
+			}
+		});
+	}
+}
+
 function activateContent(content_id) {
 	if(content_id == "#courselist_content") {
 		refreshCourselist();
+	} else if(content_id == "#studentinfo_content") {
+		refreshStudentinfo();
 	}
 	$(content_id).addClass("active");
 }

@@ -54,7 +54,8 @@ app.post('/register', function(req, res) {
 				password: req.body.password,
 				name: req.body.name,
 				birth: req.body.birth,
-				department: req.body.department
+				department: req.body.department,
+				credit: 18
 			});
 
 			student.save(function(err) {
@@ -160,6 +161,21 @@ app.get('/courselist', function(req, res) {
 	console.log("Course list request");
 
 	courses.find(function(err, result) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		res.send({result: "success", data: result});
+	});
+});
+
+app.get('/studentinfo', function(req, res) {
+	var id = req.cookies.student_id;
+	console.log("Student info request: { student_id: " + id + " }");
+
+	users.findOne({student_id: id}, function(err, result) {
 		if(err != null) {
 			res.send({result: "failed"});
 			console.error("Database read failed");
