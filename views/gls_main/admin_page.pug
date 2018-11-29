@@ -1,3 +1,4 @@
+
 #gls_row
   img(src='/image/gls_head.jpg', style='width:100%')
 
@@ -5,17 +6,17 @@
   #gls_verNav
     ul#gls_navBar.nav.flex-column.nav-pills
       li.nav-item
-        a.nav-link.active(id='home', href='#') Home
+        a.nav-link(id='home', href='#') Home
       li.nav-item
-        a.nav-link(id='addcourse', href='#') Add Course
+        a.nav-link(id='addcourse', href='#AC') Add Course
       li.nav-item
         a.nav-link(id='courselist', href='#CL') Course List
   #gls_content
-    div.tab-content
-      div.tab-pane.active(id='home_content')
+    .tab-content
+      .tab-pane(id='home_content')
         center
           img(src='/image/gls_home.jpg')
-      div.tab-pane(id='addcourse_content')
+      .tab-pane(id='addcourse_content')
         include admin_content/addcourse_content.pug
-      div.tab-pane(id='courselist_content')
+      .tab-pane(id='courselist_content')
         include admin_content/courselist_content.pug

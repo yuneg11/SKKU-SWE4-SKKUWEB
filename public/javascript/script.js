@@ -38,8 +38,25 @@ function isValidForm(form_name) {
 	return valid;
 }
 
-
 $(function() {
+	if(location.pathname == "/gls") {
+		var hashs = {
+			"#": "#home",
+			"#AC": "#addcourse",
+			"#CL": "#courselist",
+			"#SI": "#studentinfo",
+			"#CI": "#courseinfo",
+			"#CB": "#coursebag"
+		};
+		var hash = $(location).attr('hash');
+
+		if(hash == '') hash = "#";
+
+		$(".active").removeClass("active");
+		$(hashs[hash]).addClass("active");
+		$(hashs[hash]+"_content").addClass("active");
+	}
+
 	$("#login").click(function() {
 		$("#register_popup").slideUp();
 		$("#login_popup").slideToggle();
@@ -49,7 +66,6 @@ $(function() {
 		$("#login_popup").slideUp();
 		$("#register_popup").slideToggle();
 	});
-
 
 	$(".nav-link").click(function() {
 		$(".active").removeClass("active");
@@ -104,6 +120,30 @@ $(function() {
 						alert("Registration success");
 					} else if(res.result == "duplicate") {
 						alert("Duplicated ID!");
+					} else {
+						alert("Registeration failed");
+					}
+				}
+			});
+		} else {
+			alert("Fill all input!");
+		}
+	});
+
+	$("#addcourse_request").click(function() {
+		if(isValidForm("#addcourse_form")) {
+			var formData = $("#addcourse_form").serialize();
+
+			$.ajax({
+				type: "POST",
+				url: "/addcourse",
+				data: formData,
+				success: function(res){
+					if(res.result == "success") {
+						location.href = "/gls#CL";
+						location.reload();
+					} else if(res.result == "duplicate") {
+						alert("There is already that course!");
 					} else {
 						alert("Registeration failed");
 					}

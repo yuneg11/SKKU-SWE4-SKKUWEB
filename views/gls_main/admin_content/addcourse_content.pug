@@ -1,1 +1,19 @@
-| hahah
+h3 Add Course
+
+form(id = "addcourse_form")
+  p
+    | Class ID 
+    input(type='text', name='class_id')
+  p
+    | Class Name 
+    input(type='text', name='class_name')
+  p
+    | Professor 
+    input(type='text', name='professor')
+  p
+    | Maximum Students 
+    input(type='number', name='max_students')
+  p
+    | Credit 
+    input(type='number', name='credit')
+  button#addcourse_request.btn.btn-info(type='button') Add Course

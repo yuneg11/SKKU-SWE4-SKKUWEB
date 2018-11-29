@@ -5,23 +5,23 @@
   #gls_verNav
     ul#gls_navBar.nav.flex-column.nav-pills
       li.nav-item
-        a.nav-link.active(id='home', href='#') Home
+        a.nav-link(id='home', href='#') Home
       li.nav-item
-        a.nav-link(id='studentinfo', href='#') Student Info
+        a.nav-link(id='studentinfo', href='#SI') Student Info
       li.nav-item
-        a.nav-link(id='courseinfo', href='#CL') Course Info
+        a.nav-link(id='courseinfo', href='#CI') Course Info
       li.nav-item
-        a.nav-link(id='coursebag', href='#CL') Course Bag
+        a.nav-link(id='coursebag', href='#CB') Course Bag
       li.nav-item
         a.nav-link(id='gotosugang', href='/sugang') Go To Sugang
   #gls_content
-    div.tab-content
-      div.tab-pane.active(id='home_content')
+    .tab-content
+      .tab-pane(id='home_content')
         center
           img(src='/image/gls_home.jpg')
-      div.tab-pane(id='studentinfo_content')
+      .tab-pane(id='studentinfo_content')
         include student_content/studentinfo_content.pug
-      div.tab-pane(id='courseinfo_content')
+      .tab-pane(id='courseinfo_content')
         include student_content/courseinfo_content.pug
-      div.tab-pane(id='coursebag_content')
+      .tab-pane(id='coursebag_content')
         include student_content/coursebag_content.pug

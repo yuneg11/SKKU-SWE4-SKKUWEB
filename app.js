@@ -6,6 +6,7 @@ var app = express();
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 var users = require('./models/user');
+var courses = require('./models/course');
 
 app.set('view engine', 'pug')
 app.use(express.static('public'));
@@ -17,24 +18,24 @@ db.once('open', function() {
 	console.log("Connected to database");
 });
 
-mongoose.connect('mongodb://localhost/project', {useNewUrlParser : true});
+mongoose.connect('mongodb://localhost/project', {useNewUrlParser: true});
 
 app.get('/', function(req, res) {
 	var id = req.cookies.student_id;
 
-	res.render('human-index', {student_id : id});
+	res.render('human-index', {student_id: id});
 });
 
 app.get('/natural', function(req, res) {
 	var id = req.cookies.student_id;
 
-	res.render('natural-index', {student_id : id});
+	res.render('natural-index', {student_id: id});
 });
 
 app.get('/human', function(req, res) {
 	var id = req.cookies.student_id;
 
-	res.render('human-index', {student_id : id});
+	res.render('human-index', {student_id: id});
 });
 
 app.post('/register',function(req, res) {
@@ -42,7 +43,7 @@ app.post('/register',function(req, res) {
 
 	users.findOne({student_id: req.body.student_id}, function(err, result) {
 		if(err != null) {
-			res.send({result : "failed"});
+			res.send({result: "failed"});
 			console.error("Database read failed");
 			return;
 		}
@@ -58,15 +59,15 @@ app.post('/register',function(req, res) {
 
 			student.save(function(err) {
 				if(err) {
-					res.send({result : "failed"});
+					res.send({result: "failed"});
 					console.error("Database write failed");
 				} else {
-					res.send({result : "success"});
+					res.send({result: "success"});
 					console.log("Registeration success");
 				}
 			});
 		} else {
-			res.send({result : "duplicate"});
+			res.send({result: "duplicate"});
 			console.log("Registeration failed (Duplicated ID)");
 		}
 	});
@@ -106,17 +107,53 @@ app.get('/gls', function(req, res) {
 	if(id == "admin") {
 		users.findOne({student_id: id}, function(err, result) {
 			if(result.password == "1234") {
-				res.render('gls_main', {student_id : id, type: "admin"});
+				res.render('gls_main', {student_id: id, type: "admin"});
 				console.log("GLS request: { student_id: " + id + ", type: admin }");
 			} else {
-				res.render('gls_main', {student_id : id, type: "student"});
+				res.render('gls_main', {student_id: id, type: "student"});
 				console.log("GLS request: { student_id: " + id + ", type: student }");
 			}
 		});
 	} else {
-		res.render('gls_main', {student_id : id, type: "student"});
+		res.render('gls_main', {student_id: id, type: "student"});
 		console.log("GLS request: { student_id: " + id + ", type: student }");
 	}
+});
+
+app.post('/addcourse',function(req, res) {
+	console.log("Add course request: { class_id: " + req.body.class_id + ", class_name:", req.body.class_name + ", ... }");
+
+	courses.findOne({class_id: req.body.class_id}, function(err, result) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		if(result == null) {
+			var course = new courses({
+				class_id: req.body.class_id,
+				class_name: req.body.class_name,
+				professor: req.body.professor,
+				max_students: req.body.max_students,
+				credit: req.body.credit,
+				registered: 0
+			});
+
+			course.save(function(err) {
+				if(err) {
+					res.send({result: "failed"});
+					console.error("Database write failed");
+				} else {
+					res.send({result: "success"});
+					console.log("Add course success");
+				}
+			});
+		} else {
+			res.send({result: "duplicate"});
+			console.log("Add course failed (Duplicated ID)");
+		}
+	});
 });
 
 app.listen(8000, function() {
