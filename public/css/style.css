@@ -109,3 +109,13 @@ body {
 	width: 95%;
 	margin: 10px;
 }
+
+.list_table {
+	width: 100%;
+}
+
+.list_table td {
+	text-align: center;
+	font-size: 1em;
+	padding: 10px;
+}

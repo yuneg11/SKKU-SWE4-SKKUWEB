@@ -38,6 +38,40 @@ function isValidForm(form_name) {
 	return valid;
 }
 
+function refreshCourselist() {
+	$.ajax({
+		type: "GET",
+		url: "/courselist",
+		success: function(res){
+			if(res.result == "success") {
+				var table_content = "";
+
+				for(var i in res.data) {
+					table_content += "<tr>";
+					table_content += ("<td>" + res.data[i].class_id + "</td>");
+					table_content += ("<td>" + res.data[i].class_name + "</td>");
+					table_content += ("<td>" + res.data[i].professor + "</td>");
+					table_content += ("<td>" + res.data[i].credit + "</td>");
+					table_content += ("<td>" + res.data[i].max_students + "</td>");
+					table_content += ("<td>" + res.data[i].registered + "</td>");
+					table_content += "</tr>";
+				}
+
+				$(".list_table_content").html(table_content);
+			} else {
+				alert("Course list loading failed!");
+			}
+		}
+	});
+}
+
+function activateContent(content_id) {
+	if(content_id == "#courselist_content") {
+		refreshCourselist();
+	}
+	$(content_id).addClass("active");
+}
+
 $(function() {
 	if(location.pathname == "/gls") {
 		var hashs = {
@@ -54,7 +88,7 @@ $(function() {
 
 		$(".active").removeClass("active");
 		$(hashs[hash]).addClass("active");
-		$(hashs[hash]+"_content").addClass("active");
+		activateContent(hashs[hash]+"_content");
 	}
 
 	$("#login").click(function() {
@@ -73,7 +107,7 @@ $(function() {
 		var button_id = $(this).attr("id");
 		var content_id = button_id + "_content";
 		$(this).addClass("active");
-		$('#'+content_id).addClass("active");
+		activateContent('#'+content_id);
 	});
 	
 	$("#login_request").click(function() {
@@ -140,7 +174,7 @@ $(function() {
 				data: formData,
 				success: function(res){
 					if(res.result == "success") {
-						location.href = "/gls#CL";
+						location.replace("/gls#CL");
 						location.reload();
 					} else if(res.result == "duplicate") {
 						alert("There is already that course!");
