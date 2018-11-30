@@ -188,6 +188,32 @@ app.get('/studentinfo', function(req, res) {
 	});
 });
 
+app.get('/courseinfo', function(req, res) {
+	var id = req.cookies.student_id;
+	console.log("Course info request: { student_id: " + id + " }");
+
+	courses.find(function(err, course) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		users.findOne({student_id: id}, function(err, student) {
+			if(err != null) {
+				res.send({result: "failed"});
+				console.error("Database read failed");
+				return;
+			}
+
+			if(student != null)
+				res.send({result: "success", course: course, register: student.register});
+			else
+				res.send({result: "failed"});
+		});
+	});
+});
+
 app.get('/coursebag', function(req, res) {
 	var id = req.cookies.student_id;
 	console.log("Course bag request: { student_id: " + id + " }");

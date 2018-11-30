@@ -92,6 +92,32 @@ function isInArray(item, array) {
 	return false;
 }
 
+function refreshCourseinfo() {
+	$.ajax({
+		type: "GET",
+		url: "/courseinfo",
+		success: function(res){
+			if(res.result == "success") {
+				var table_content = "";
+				for(var i in res.course) {
+					if(isInArray(res.course[i].class_id, res.register)) {
+						table_content += "<tr>";
+						table_content += ("<td>" + res.course[i].class_id + "</td>");
+						table_content += ("<td>" + res.course[i].class_name + "</td>");
+						table_content += ("<td>" + res.course[i].professor + "</td>");
+						table_content += ("<td>" + res.course[i].credit + "</td>");
+						table_content += ("<td>" + res.course[i].max_students + "</td>");
+						table_content += "</tr>";
+					}
+				}
+				$(".list_table_content").html(table_content);
+			} else {
+				alert("Course info loading failed!");
+			}
+		}
+	});
+}
+
 function refreshCoursebag() {
 	$.ajax({
 		type: "GET",
@@ -165,7 +191,7 @@ function activateContent(content_id) {
 	} else if(content_id == "#studentinfo_content") {
 		refreshStudentinfo();
 	} else if(content_id == "#courseinfo_content") {
-
+		refreshCourseinfo();
 	} else if(content_id == "#coursebag_content") {
 		refreshCoursebag();
 	}
