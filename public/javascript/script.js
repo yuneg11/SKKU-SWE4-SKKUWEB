@@ -198,6 +198,40 @@ function activateContent(content_id) {
 	$(content_id).addClass("active");
 }
 
+function sugangCancel(student_id, class_id) {
+	$.ajax({
+		type: "POST",
+		url: "/sugang/cancel",
+		data: {student_id: student_id, class_id: class_id},
+		success: function(res){
+			if(res.result == "success")
+				location.reload();
+			else
+				alert("Cancel failed!");
+		}
+	});
+}
+
+function sugangRegister(student_id, class_id) {
+	$.ajax({
+		type: "POST",
+		url: "/sugang/register",
+		data: {student_id: student_id, class_id: class_id},
+		success: function(res){
+			if(res.result == "success")
+				location.reload();
+			else if(res.result == "duplicate")
+				alert("Already registered the course!");
+			else if(res.result == "seat_limit")
+				alert("There is no seat!");
+			else if(res.result == "credit_limit")
+				alert("Not enough credit!");
+			else
+				alert("Registration failed!");
+		}
+	});
+}
+
 $(function() {
 	if(location.pathname == "/gls") {
 		var hashs = {

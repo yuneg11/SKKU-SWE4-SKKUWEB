@@ -14,7 +14,7 @@ h2 {
 }
 
 h3 {
-	font-size: 30px;
+	font-size: 25px;
 }
 
 h4 {
@@ -95,6 +95,25 @@ body {
 	width: 70%;
 	margin: 10px;
 }
+
+#sugang_ver {
+	height: 95vh;
+	margin-top: 0px;
+	margin-left: 10px;
+}
+
+#sugang_info {
+	width: 20%;
+	border-right-style: solid;
+	border-right-width: 5px;
+	border-right-color: gray;
+}
+
+#sugang_content {
+	width: 70%;
+	margin: 10px;
+}
+
 .td_head {
 	font-weight: bold;
 }
@@ -103,11 +122,6 @@ body {
 	padding-bottom: 5em;
 	display: none;
 	text-align: center;
-}
-
-#sugang_info {
-	width: 95%;
-	margin: 10px;
 }
 
 .list_table {

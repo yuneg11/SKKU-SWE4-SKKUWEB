@@ -1,0 +1,78 @@
+html
+  head
+    title Sugang
+    include includes/libs.pug
+  body
+    #sugang_ver.row
+      #sugang_info
+        center
+          a(href='/gls')
+            img(src='/image/sugang_logo.jpg', style='width:100%')
+        center
+          table.list_table.table-bordered(style='width:88%; margin:30px 0px 0px 0px')
+            tbody
+              tr
+                td.td_head(style='background-color:#7CBC42') Name
+                td.td_head #{student.name}
+              tr
+                td.td_head(style='background-color:#7CBC42') Student ID
+                td.td_head #{student.student_id}
+              tr
+                td.td_head(style='background-color:#7CBC42') Allowable Credit
+                td.td_head #{student.credit}
+              tr
+                td.td_head(style='background-color:#7CBC42') Major
+                td.td_head #{student.department}
+
+      #sugang_content
+        img(src='/image/sugang_head.jpg', style='width:110%;margin:0px 0px 20px 0px')
+
+        h3 Registered Courses
+        table.list_table.table-bordered
+          tbody
+            tr
+              td.td_head Class ID
+              td.td_head Class Name
+              td.td_head Professor
+              td.td_head Credit
+              td.td_head Maximum Students
+              td.td_head Now Registered Students
+              td.td_head Cancel Register
+          tbody
+            each c in course
+              each r in student.register
+                if c.class_id == r
+                  tr
+                    td #{c.class_id}
+                    td #{c.class_name}
+                    td #{c.professor}
+                    td #{c.credit}
+                    td #{c.max_students}
+                    td #{c.registered}
+                    td
+                      button.btn.btn-success(onclick=`sugangCancel("${student.student_id}", "${c.class_id}")`) Cancel
+
+        h3 Course Bag
+        table.list_table.table-bordered
+          tbody
+            tr
+              td.td_head Class ID
+              td.td_head Class Name
+              td.td_head Professor
+              td.td_head Credit
+              td.td_head Maximum Students
+              td.td_head Now Registered Students
+              td.td_head Register
+          tbody
+            each c in course
+              each b in student.bag
+                if c.class_id == b
+                  tr
+                    td #{c.class_id}
+                    td #{c.class_name}
+                    td #{c.professor}
+                    td #{c.credit}
+                    td #{c.max_students}
+                    td #{c.registered}
+                    td
+                      button.btn.btn-info(onclick=`sugangRegister("${student.student_id}", "${c.class_id}")`) Register

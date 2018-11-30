@@ -253,8 +253,10 @@ app.post('/coursebag/putinbag', function(req, res) {
 
 		var exist = false;
 		for(var i in student.bag) {
-			if(student.bag[i] == req.body.class_id)
+			if(student.bag[i] == req.body.class_id) {
 				exist = true;
+				break;
+			}
 		}
 
 		if(exist) {
@@ -280,8 +282,10 @@ app.post('/coursebag/putoutbag', function(req, res) {
 
 		var exist = false;
 		for(var i in student.bag) {
-			if(student.bag[i] == req.body.class_id)
+			if(student.bag[i] == req.body.class_id) {
 				exist = true;
+				break;
+			}
 		}
 
 		if(exist) {
@@ -290,6 +294,110 @@ app.post('/coursebag/putoutbag', function(req, res) {
 			res.send({result: "success"});
 		} else {
 			res.send({result: "failed"});
+		}
+	});
+});
+
+app.get('/sugang', function(req, res) {
+	var id = req.cookies.student_id;
+
+	users.findOne({student_id: id}, function(err, student) {
+		if(student.student_id == "admin" && student.password == "1234") {
+			console.log("Sugang request redirected: { student_id: " + id + ", type: admin }");
+			res.redirect('/gls');
+		} else {
+			courses.find(function(err, course) {
+				if(err != null)
+					console.error("Database read failed");
+				res.render('sugang', {student: student, course: course});
+				console.log("Sugang request: { student_id: " + id + " }");
+			});
+		}
+	});
+});
+
+app.post('/sugang/cancel', function(req, res) {
+	console.log("Sugang cancel request: {student_id: " + req.body.student_id + ", class_id: " + req.body.class_id + " }");
+	users.findOne({student_id: req.body.student_id}, function(err, student) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.log("Sugang cancel failed");
+		}
+
+		var exist = false;
+		for(var i in student.register) {
+			if(student.register[i] == req.body.class_id) {
+				exist = true;
+				break;
+			}
+		}
+
+		if(exist) {
+			courses.findOne({class_id: req.body.class_id}, function(err, course) {
+				if(err != null || course == null) {
+					res.send({result: "failed"});
+					console.log("Sugang cancel failed");
+				}
+
+				student.register.pull(req.body.class_id);
+				student.credit += course.credit;
+				student.save();
+				course.registered--;
+				course.save();
+
+				res.send({result: "success"});
+				console.log("Sugang cancel success");
+			});
+		} else {
+			res.send({result: "failed"});
+			console.log("Sugang cancel failed");
+		}
+	});
+});
+
+app.post('/sugang/register', function(req, res) {
+	console.log("Sugang register request: {student_id: " + req.body.student_id + ", class_id: " + req.body.class_id + " }");
+	users.findOne({student_id: req.body.student_id}, function(err, student) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.log("Sugang register failed");
+		}
+
+		var exist = false;
+		for(var i in student.register) {
+			if(student.register[i] == req.body.class_id) {
+				exist = true;
+				break;
+			}
+		}
+
+		if(!exist) {
+			courses.findOne({class_id: req.body.class_id}, function(err, course) {
+				if(err != null || course == null) {
+					res.send({result: "failed"});
+					console.log("Sugang register failed");
+				}
+
+				if(course.max_students == course.registered || student.credit - course.credit < 0) {
+					if(student.credit - course.credit < 0)
+						res.send({result: "credit_limit"});
+					else
+						res.send({result: "seat_limit"});
+					console.log("Sugang register failed");
+				} else {
+					student.register.push(req.body.class_id);
+					student.credit -= course.credit;
+					student.save();
+					course.registered++;
+					course.save();
+
+					res.send({result: "success"});
+					console.log("Sugang register success");
+				}
+			});
+		} else {
+			res.send({result: "duplicate"});
+			console.log("Sugang register failed");
 		}
 	});
 });
