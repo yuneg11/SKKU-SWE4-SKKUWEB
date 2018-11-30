@@ -4,7 +4,145 @@ html
     title Welcome GLS
     include includes/libs.pug
   body
-    if type == "admin"
-      include gls_main/admin_page.pug
-    else
-      include gls_main/student_page.pug
+    #gls_row
+      img(src='/image/gls_head.jpg', style='width:100%')
+    #gls_ver.row
+      #gls_verNav
+        ul#gls_navBar.nav.flex-column.nav-pills
+          li.nav-item
+            a.nav-link(id='H_link', href='#', onclick='switchPage("H")') Home
+          if type == "admin"
+            li.nav-item
+              a.nav-link(id='AC_link', href='#AC', onclick='switchPage("AC")') Add Course
+            li.nav-item
+              a.nav-link(id='CL_link', href='#CL', onclick='switchPage("CL")') Course List
+          else
+            li.nav-item
+              a.nav-link(id='SI_link', href='#SI', onclick='switchPage("SI")') Student Info
+            li.nav-item
+              a.nav-link(id='CI_link', href='#CI', onclick='switchPage("CI")') Course Info
+            li.nav-item
+              a.nav-link(id='CB_link', href='#CB', onclick='switchPage("CB")') Course Bag
+            li.nav-item
+              a.nav-link(href='/sugang') Go To Sugang
+      #gls_content
+        .tab-content
+          .tab-pane(id='H_content')
+            center
+              img(src='/image/gls_home.jpg')
+          if type == "admin"
+            .tab-pane(id='AC_content')
+              h3 Add Course
+              form(id = "addcourse_form")
+                p Class ID 
+                  input(type='text', name='class_id')
+                p Class Name 
+                  input(type='text', name='class_name')
+                p Professor 
+                  input(type='text', name='professor')
+                p Maximum Students 
+                  input(type='number', name='max_students')
+                p Credit 
+                  input(type='number', name='credit')
+                button.btn.btn-info(type='button', onclick='addCourse()') Add Course
+            .tab-pane(id='CL_content')
+              h3 Course List
+              table.list_table.table-bordered
+                tbody
+                  tr
+                    td.td_head Class ID
+                    td.td_head Class Name
+                    td.td_head Professor
+                    td.td_head Credit
+                    td.td_head Maximum Students
+                    td.td_head Now Registered Students
+                each c in course
+                  tr
+                    td #{c.class_id}
+                    td #{c.class_name}
+                    td #{c.professor}
+                    td #{c.credit}
+                    td #{c.max_students}
+                    td #{c.registered}
+          else
+            .tab-pane(id='SI_content')
+              h3 Student Info
+              table.list_table.table-bordered
+                tbody
+                  tr
+                    td.td_head(colspan=2) Name
+                    td(colspan=2) #{student.name}
+                  tr
+                    td.td_head(colspan=2) Student ID
+                    td(colspan=2) #{student.student_id}
+                  tr
+                    td.td_head Birth
+                    td #{student.birth_string}
+                    td.td_head Allowable Credits
+                    td #{student.credit}
+                  tr
+                    td.td_head(colspan=2) Major
+                    td(colspan=2) #{student.department}
+            .tab-pane(id='CI_content')
+              h3 Registered Courses
+              table.list_table.table-bordered
+                tbody
+                  tr
+                    td.td_head Class ID
+                    td.td_head Class Name
+                    td.td_head Professor
+                    td.td_head Credit
+                    td.td_head Maximum Students
+                tbody
+                  each c in course
+                    each r in student.register
+                      if c.class_id == r
+                        tr
+                          td #{c.class_id}
+                          td #{c.class_name}
+                          td #{c.professor}
+                          td #{c.credit}
+                          td #{c.max_students}
+            .tab-pane(id='CB_content')
+              h3 Course List
+              table.list_table.table-bordered
+                tbody
+                  tr
+                    td.td_head Class ID
+                    td.td_head Class Name
+                    td.td_head Professor
+                    td.td_head Credit
+                    td.td_head Maximum Students
+                    td.td_head Put in Bag
+                  each c in course
+                    tr
+                      td #{c.class_id}
+                      td #{c.class_name}
+                      td #{c.professor}
+                      td #{c.credit}
+                      td #{c.max_students}
+                      td
+                        button.btn.btn-success(onclick=`coursebagPutinbag("${student.student_id}", "${c.class_id}")`) Put in your bag
+              h3 Course Bag
+              table.list_table.table-bordered
+                tbody
+                  tr
+                    td.td_head Class ID
+                    td.td_head Class Name
+                    td.td_head Professor
+                    td.td_head Credit
+                    td.td_head Maximum Students
+                    td.td_head Number of Registered Students
+                    td.td_head Put out from Bag
+                  each c in course
+                    each b in student.bag
+                      if c.class_id == b
+                        tr
+                          td #{c.class_id}
+                          td #{c.class_name}
+                          td #{c.professor}
+                          td #{c.credit}
+                          td #{c.max_students}
+                          td #{c.registered}
+                          td
+                            button.btn.btn-info(onclick=`coursebagPutoutbag("${student.student_id}", "${c.class_id}")`) Put out from your bag

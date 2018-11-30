@@ -1,43 +1,36 @@
-#register_popup.fixed-bottom.bg-white
-  form(id = "register_form")
-    p
-      | Student ID 
-      input(type='text', name='student_id')
-    p
-      | Password 
-      input(type='password', name='password')
-    p
-      | Name 
-      input(type='text', name='name')
-    p
-      | Birth 
-      input(type='date', name='birth')
-    p
-      | Department 
-      input(type='text', name='department')
-    button#register_request.btn.btn-light(type='button') Register
+#register_popup.popup.fixed-bottom.bg-white
+  center
+    form(id = "register_form")
+      p Student ID 
+        input(type='text', name='student_id')
+      p Password 
+        input(type='password', name='password')
+      p Name 
+        input(type='text', name='name')
+      p Birth 
+        input(type='date', name='birth')
+      p Department 
+        input(type='text', name='department')
+      button.btn.btn-light(type='button', onclick='registerStudent()') Register
       
-#login_popup.fixed-bottom.bg-white
-  form(id = "login_form")
-    p
-      | Student ID 
-      input(type='text', name='student_id')
-    p
-      | Password 
-      input(type='password', name='password')
-    button#login_request.btn.btn-light(type='button') Login
+#login_popup.popup.fixed-bottom.bg-white
+  center
+    form(id = "login_form")
+      p Student ID 
+        input(type='text', name='student_id')
+      p Password 
+        input(type='password', name='password')
+      button.btn.btn-light(type='button', onclick='login()') Login
 
-#my_buttonNav.navbar.navbar-light.navbar-expand-lg.fixed-bottom
+.navbar.navbar-light.navbar-expand-lg.fixed-bottom(style='background-color: white')
   .nav-item
-    button.btn.btn-light(type='button', onclick="hideNavi('my_nav')") Hide/Show Navigation Bar
+    button.btn.btn-light(type='button', onclick="hideNavi()") Hide/Show Navigation Bar
   .nav-item
-    button.btn.btn-light(type='button', onclick="changeTableStyle('my_table')") White/Black Table Style
-  
+    button.btn.btn-light(type='button', onclick="changeTableStyle()") White/Black Table Style
   if !student_id
-    button#register.btn.btn-info.btn-lg(type='button', style='position: absolute; right: 100px; bottom:10px;') Sign up
-    button#login.btn.btn-success.btn-lg(type='button', style='position: absolute; right: 10px; bottom:10px;') Login
+    button.corner.btn.btn-info.btn-lg(type='button', style='right: 100px', onclick='showRegister()') Sign up
+    button.corner.btn.btn-success.btn-lg(type='button', style='right: 10px', onclick='showLogin()') Login
   else
-    p
-      | User : #{student_id}
-    button#gls.btn.btn-info.btn-lg(type='button', style='position: absolute; right: 110px; bottom:10px;', onclick="window.location.href='/gls'") GLS
-    button#logout.btn.btn-warning.btn-lg(type='button', style='position: absolute; right: 10px; bottom:10px;') Logout
+    p User : #{student_id}
+    button.corner.btn.btn-info.btn-lg(type='button', style='right: 110px', onclick="window.location.href='/gls'") GLS
+    button.corner.btn.btn-warning.btn-lg(type='button', style='right: 10px', onclick='logout()') Logout

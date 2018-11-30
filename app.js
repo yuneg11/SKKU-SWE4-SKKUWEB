@@ -22,25 +22,21 @@ mongoose.connect('mongodb://localhost/project', {useNewUrlParser: true});
 
 app.get('/', function(req, res) {
 	var id = req.cookies.student_id;
-
 	res.render('human-index', {student_id: id});
 });
 
 app.get('/natural', function(req, res) {
 	var id = req.cookies.student_id;
-
 	res.render('natural-index', {student_id: id});
 });
 
 app.get('/human', function(req, res) {
 	var id = req.cookies.student_id;
-
 	res.render('human-index', {student_id: id});
 });
 
 app.post('/register', function(req, res) {
 	console.log("Register request: { student_id: " + req.body.student_id + ", password:", req.body.password + ", ... }");
-
 	users.findOne({student_id: req.body.student_id}, function(err, result) {
 		if(err != null) {
 			res.send({result: "failed"});
@@ -78,7 +74,6 @@ app.post('/register', function(req, res) {
 
 app.post('/login', function(req, res) {
 	console.log("Login request: { student_id: " + req.body.student_id + ", password:", req.body.password + " }");
-
 	users.findOne({$and:[{student_id: req.body.student_id}, {password: req.body.password}]}, function(err, result) {
 		if(err != null) {
 			console.error("Database access failed");
@@ -96,7 +91,7 @@ app.post('/login', function(req, res) {
 	});
 });
 
-app.post('/logout', function(req, res) {
+app.get('/logout', function(req, res) {
 	var id = req.cookies.student_id;
 	console.log("Logout request: { student_id: " + id + " }");
 	res.cookie('student_id', '');
@@ -106,26 +101,32 @@ app.post('/logout', function(req, res) {
 
 app.get('/gls', function(req, res) {
 	var id = req.cookies.student_id;
-	
-	if(id == "admin") {
-		users.findOne({student_id: id}, function(err, result) {
-			if(result.password == "1234") {
-				res.render('gls_main', {student_id: id, type: "admin"});
+	users.findOne({student_id: id}, function(err, student) {
+		if(err != null) {
+			res.send("Access denied");
+			console.error("Database read failed");
+			return;
+		}
+		courses.find(function(err, course) {
+			if(err != null || student == null) {
+				res.send("Access denied");
+				console.error("Database read failed");
+				return;
+			}
+			if(student.student_id == "admin" && student.password == "1234") {
+				res.render('gls_main', {type: "admin", course: course});
 				console.log("GLS request: { student_id: " + id + ", type: admin }");
 			} else {
-				res.render('gls_main', {student_id: id, type: "student"});
+				student.birth_string = student.birth.getFullYear()+'-'+(student.birth.getMonth()+1)+'-'+student.birth.getDate();
+				res.render('gls_main', {type: "student", student: student, course: course});
 				console.log("GLS request: { student_id: " + id + ", type: student }");
 			}
 		});
-	} else {
-		res.render('gls_main', {student_id: id, type: "student"});
-		console.log("GLS request: { student_id: " + id + ", type: student }");
-	}
+	});
 });
 
 app.post('/addcourse', function(req, res) {
 	console.log("Add course request: { class_id: " + req.body.class_id + ", class_name:", req.body.class_name + ", ... }");
-
 	courses.findOne({class_id: req.body.class_id}, function(err, result) {
 		if(err != null) {
 			res.send({result: "failed"});
@@ -142,7 +143,6 @@ app.post('/addcourse', function(req, res) {
 				credit: req.body.credit,
 				registered: 0
 			});
-
 			course.save(function(err) {
 				if(err) {
 					res.send({result: "failed"});
@@ -159,92 +159,9 @@ app.post('/addcourse', function(req, res) {
 	});
 });
 
-app.get('/courselist', function(req, res) {
-	console.log("Course list request");
-
-	courses.find(function(err, result) {
-		if(err != null) {
-			res.send({result: "failed"});
-			console.error("Database read failed");
-			return;
-		}
-
-		res.send({result: "success", data: result});
-	});
-});
-
-app.get('/studentinfo', function(req, res) {
-	var id = req.cookies.student_id;
-	console.log("Student info request: { student_id: " + id + " }");
-
-	users.findOne({student_id: id}, function(err, result) {
-		if(err != null) {
-			res.send({result: "failed"});
-			console.error("Database read failed");
-			return;
-		}
-
-		res.send({result: "success", data: result});
-	});
-});
-
-app.get('/courseinfo', function(req, res) {
-	var id = req.cookies.student_id;
-	console.log("Course info request: { student_id: " + id + " }");
-
-	courses.find(function(err, course) {
-		if(err != null) {
-			res.send({result: "failed"});
-			console.error("Database read failed");
-			return;
-		}
-
-		users.findOne({student_id: id}, function(err, student) {
-			if(err != null) {
-				res.send({result: "failed"});
-				console.error("Database read failed");
-				return;
-			}
-
-			if(student != null)
-				res.send({result: "success", course: course, register: student.register});
-			else
-				res.send({result: "failed"});
-		});
-	});
-});
-
-app.get('/coursebag', function(req, res) {
-	var id = req.cookies.student_id;
-	console.log("Course bag request: { student_id: " + id + " }");
-
-	courses.find(function(err, course) {
-		if(err != null) {
-			res.send({result: "failed"});
-			console.error("Database read failed");
-			return;
-		}
-
-		users.findOne({student_id: id}, function(err, student) {
-			if(err != null) {
-				res.send({result: "failed"});
-				console.error("Database read failed");
-				return;
-			}
-
-			if(student != null)
-				res.send({result: "success", course: course, bag: student.bag});
-			else
-				res.send({result: "failed"});
-		});
-	});
-});
-
 app.post('/coursebag/putinbag', function(req, res) {
-	var id = req.cookies.student_id;
-	console.log("Put in bag request: { student_id: " + id + ", class_id: " + req.body.class_id + " }");
-
-	users.findOne({student_id: id}, function(err, student) {
+	console.log("Put in bag request: { student_id: " + req.body.student_id + ", class_id: " + req.body.class_id + " }");
+	users.findOne({student_id: req.body.student_id}, function(err, student) {
 		if(err != null) {
 			res.send({result: "failed"});
 			console.error("Database read failed");
@@ -252,13 +169,12 @@ app.post('/coursebag/putinbag', function(req, res) {
 		}
 
 		var exist = false;
-		for(var i in student.bag) {
+		for(var i = 0; i < student.bag.length; i++) {
 			if(student.bag[i] == req.body.class_id) {
 				exist = true;
 				break;
 			}
 		}
-
 		if(exist) {
 			res.send({result: "failed"});
 		} else {
@@ -270,10 +186,8 @@ app.post('/coursebag/putinbag', function(req, res) {
 });
 
 app.post('/coursebag/putoutbag', function(req, res) {
-	var id = req.cookies.student_id;
-	console.log("Put out bag request: { student_id: " + id + ", class_id: " + req.body.class_id + "}");
-
-	users.findOne({student_id: id}, function(err, student) {
+	console.log("Put out bag request: { student_id: " + req.body.student_id + ", class_id: " + req.body.class_id + "}");
+	users.findOne({student_id: req.body.student_id}, function(err, student) {
 		if(err != null) {
 			res.send({result: "failed"});
 			console.error("Database read failed");
@@ -281,13 +195,12 @@ app.post('/coursebag/putoutbag', function(req, res) {
 		}
 
 		var exist = false;
-		for(var i in student.bag) {
+		for(var i = 0; i < student.bag.length; i++) {
 			if(student.bag[i] == req.body.class_id) {
 				exist = true;
 				break;
 			}
 		}
-
 		if(exist) {
 			student.bag.pull(req.body.class_id);
 			student.save();
@@ -300,7 +213,6 @@ app.post('/coursebag/putoutbag', function(req, res) {
 
 app.get('/sugang', function(req, res) {
 	var id = req.cookies.student_id;
-
 	users.findOne({student_id: id}, function(err, student) {
 		if(student.student_id == "admin" && student.password == "1234") {
 			console.log("Sugang request redirected: { student_id: " + id + ", type: admin }");
@@ -325,13 +237,12 @@ app.post('/sugang/cancel', function(req, res) {
 		}
 
 		var exist = false;
-		for(var i in student.register) {
+		for(var i = 0; i < student.register.length; i++) {
 			if(student.register[i] == req.body.class_id) {
 				exist = true;
 				break;
 			}
 		}
-
 		if(exist) {
 			courses.findOne({class_id: req.body.class_id}, function(err, course) {
 				if(err != null || course == null) {
@@ -364,13 +275,12 @@ app.post('/sugang/register', function(req, res) {
 		}
 
 		var exist = false;
-		for(var i in student.register) {
+		for(var i = 0; i < student.register.length; i++) {
 			if(student.register[i] == req.body.class_id) {
 				exist = true;
 				break;
 			}
 		}
-
 		if(!exist) {
 			courses.findOne({class_id: req.body.class_id}, function(err, course) {
 				if(err != null || course == null) {
