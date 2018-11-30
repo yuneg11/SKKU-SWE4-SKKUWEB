@@ -78,11 +78,85 @@ function refreshStudentinfo() {
 					$("#student_info_credit").html(res.data.credit);
 					$("#student_info_department").html(res.data.department);
 				} else {
-					alert("Course list loading failed!");
+					alert("Student info loading failed!");
 				}
 			}
 		});
 	}
+}
+
+function isInArray(item, array) {
+	for(var i in array)
+		if(array[i] == item)
+			return true;
+	return false;
+}
+
+function refreshCoursebag() {
+	$.ajax({
+		type: "GET",
+		url: "/coursebag",
+		success: function(res){
+			if(res.result == "success") {
+				var coursebag_content1 = "";
+				var coursebag_content2 = "";
+				for(var i in res.course) {
+					coursebag_content1 += "<tr>";
+					coursebag_content1 += ("<td>" + res.course[i].class_id + "</td>");
+					coursebag_content1 += ("<td>" + res.course[i].class_name + "</td>");
+					coursebag_content1 += ("<td>" + res.course[i].professor + "</td>");
+					coursebag_content1 += ("<td>" + res.course[i].credit + "</td>");
+					coursebag_content1 += ("<td>" + res.course[i].max_students + "</td>");
+					coursebag_content1 += ("<td><button class='btn btn-success' id='putinbag_" + i + "'>Put in your bag</button></td>");
+					coursebag_content1 += "</tr>";
+					$("#coursebag_content1").on("click", "#putinbag_"+i, function(){
+						var class_num = this.id.split("_")[1];
+						$.ajax({
+							type: "POST",
+							url: "/coursebag/putinbag",
+							data: {class_id: res.course[class_num].class_id},
+							success: function(res){
+								if(res.result == "success")
+									location.reload();
+								else
+									alert("Already in your course bag!");
+							}
+						});
+					});
+
+					if(isInArray(res.course[i].class_id, res.bag)) {
+						coursebag_content2 += "<tr>";
+						coursebag_content2 += ("<td>" + res.course[i].class_id + "</td>");
+						coursebag_content2 += ("<td>" + res.course[i].class_name + "</td>");
+						coursebag_content2 += ("<td>" + res.course[i].professor + "</td>");
+						coursebag_content2 += ("<td>" + res.course[i].credit + "</td>");
+						coursebag_content2 += ("<td>" + res.course[i].max_students + "</td>");
+						coursebag_content2 += ("<td>" + res.course[i].registered + "</td>");
+						coursebag_content2 += ("<td><button class='btn btn-info' id='putoutbag_" + i + "'>Put out from your bag</button></td>");
+						coursebag_content2 += "</tr>";
+					}
+					$("#coursebag_content2").on("click", "#putoutbag_"+i, function(){
+						var class_num = this.id.split("_")[1];
+						$.ajax({
+							type: "POST",
+							url: "/coursebag/putoutbag",
+							data: {class_id: res.course[class_num].class_id},
+							success: function(res){
+								if(res.result == "success")
+									location.reload();
+								else
+									alert("Already out from your course bag!");
+							}
+						});
+					});
+				}
+				$("#coursebag_content1").html(coursebag_content1);
+				$("#coursebag_content2").html(coursebag_content2);
+			} else {
+				alert("Course bag loading failed!");
+			}
+		}
+	});
 }
 
 function activateContent(content_id) {
@@ -90,6 +164,10 @@ function activateContent(content_id) {
 		refreshCourselist();
 	} else if(content_id == "#studentinfo_content") {
 		refreshStudentinfo();
+	} else if(content_id == "#courseinfo_content") {
+
+	} else if(content_id == "#coursebag_content") {
+		refreshCoursebag();
 	}
 	$(content_id).addClass("active");
 }

@@ -55,7 +55,9 @@ app.post('/register', function(req, res) {
 				name: req.body.name,
 				birth: req.body.birth,
 				department: req.body.department,
-				credit: 18
+				credit: 18,
+				bag: [],
+				register: []
 			});
 
 			student.save(function(err) {
@@ -183,6 +185,86 @@ app.get('/studentinfo', function(req, res) {
 		}
 
 		res.send({result: "success", data: result});
+	});
+});
+
+app.get('/coursebag', function(req, res) {
+	var id = req.cookies.student_id;
+	console.log("Course bag request: { student_id: " + id + " }");
+
+	courses.find(function(err, course) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		users.findOne({student_id: id}, function(err, student) {
+			if(err != null) {
+				res.send({result: "failed"});
+				console.error("Database read failed");
+				return;
+			}
+
+			if(student != null)
+				res.send({result: "success", course: course, bag: student.bag});
+			else
+				res.send({result: "failed"});
+		});
+	});
+});
+
+app.post('/coursebag/putinbag', function(req, res) {
+	var id = req.cookies.student_id;
+	console.log("Put in bag request: { student_id: " + id + ", class_id: " + req.body.class_id + " }");
+
+	users.findOne({student_id: id}, function(err, student) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		var exist = false;
+		for(var i in student.bag) {
+			if(student.bag[i] == req.body.class_id)
+				exist = true;
+		}
+
+		if(exist) {
+			res.send({result: "failed"});
+		} else {
+			student.bag.push(req.body.class_id);
+			student.save();
+			res.send({result: "success"});
+		}
+	});
+});
+
+app.post('/coursebag/putoutbag', function(req, res) {
+	var id = req.cookies.student_id;
+	console.log("Put out bag request: { student_id: " + id + ", class_id: " + req.body.class_id + "}");
+
+	users.findOne({student_id: id}, function(err, student) {
+		if(err != null) {
+			res.send({result: "failed"});
+			console.error("Database read failed");
+			return;
+		}
+
+		var exist = false;
+		for(var i in student.bag) {
+			if(student.bag[i] == req.body.class_id)
+				exist = true;
+		}
+
+		if(exist) {
+			student.bag.pull(req.body.class_id);
+			student.save();
+			res.send({result: "success"});
+		} else {
+			res.send({result: "failed"});
+		}
 	});
 });
 
