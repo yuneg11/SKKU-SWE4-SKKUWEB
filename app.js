@@ -214,6 +214,11 @@ app.post('/coursebag/putoutbag', function(req, res) {
 app.get('/sugang', function(req, res) {
 	var id = req.cookies.student_id;
 	users.findOne({student_id: id}, function(err, student) {
+		if(err != null || student == null) {
+			res.send("Access denied");
+			console.log("Sugang access denied");
+			return;
+		}
 		if(student.student_id == "admin" && student.password == "1234") {
 			console.log("Sugang request redirected: { student_id: " + id + ", type: admin }");
 			res.redirect('/gls');
